@@ -47,39 +47,39 @@ public class BacklogController {
 	}
 	
 	@GetMapping("/{backlogId}")
-	public Iterable<ProjectTask> getProjectBacklog(@PathVariable String backlogId){
+	public Iterable<ProjectTask> getProjectBacklog(@PathVariable String backlogId,Principal principal){
 		
-		return projectTaskService.findBacklogById(backlogId);
+		return projectTaskService.findBacklogById(backlogId,principal.getName());
 	}
 	
 	@GetMapping("/{backlogId}/{ptId}")
-	public ResponseEntity<?> getProjectTask(@PathVariable String backlogId,@PathVariable String ptId){
+	public ResponseEntity<?> getProjectTask(@PathVariable String backlogId,@PathVariable String ptId,Principal principal){
 		
-		ProjectTask projectTask = projectTaskService.findPtByProjectSequence(backlogId,ptId);
+		ProjectTask projectTask = projectTaskService.findPtByProjectSequence(backlogId,ptId,principal.getName());
 		
 		return new ResponseEntity<ProjectTask>(projectTask,HttpStatus.OK);
 	}
 	
 	@PatchMapping("/{backlogId}/{ptId}")
 	public ResponseEntity<?> updateProjecTask(@Valid @RequestBody ProjectTask projectTask,BindingResult result,
-			@PathVariable String backlogId,@PathVariable String ptId){
+			@PathVariable String backlogId,@PathVariable String ptId,Principal principal){
 	
 		ResponseEntity<?> errorMap = errorService.errorService(result);
 		if(errorMap!=null)
 			return errorMap;
 		
-		ProjectTask updatedTask = projectTaskService.updateByProjectSequence(projectTask, backlogId, ptId);
+		ProjectTask updatedTask = projectTaskService.updateByProjectSequence(projectTask, backlogId, ptId,principal.getName());
 		
 		return new ResponseEntity<ProjectTask>(updatedTask,HttpStatus.OK);
 		
 	}
 	
 	@DeleteMapping("/{backlogId}/{ptId}")
-	public ResponseEntity<?> deleteProjectTask(@PathVariable String backlogId,@PathVariable String ptId)
+	public ResponseEntity<?> deleteProjectTask(@PathVariable String backlogId,@PathVariable String ptId,Principal principal)
 	{
 		
 		
-		projectTaskService.deletePtByProjSequence(backlogId, ptId);
+		projectTaskService.deletePtByProjSequence(backlogId, ptId,principal.getName());
 		return new ResponseEntity<String>("Project Task "+ptId+" was deleted successfully",HttpStatus.OK);
 	}
 	
